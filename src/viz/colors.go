@@ -1,4 +1,4 @@
-package colors
+package viz
 
 import "happymonday.dev/ray-tracer/src/tuples"
 
