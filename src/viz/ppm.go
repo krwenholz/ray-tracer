@@ -46,5 +46,5 @@ func CanvasToPPM(c Canvas) string {
 }
 
 func ppmScaledColor(c Color) (int, int, int) {
-	return scaledColorValue(c.R()), scaledColorValue(c.G()), scaledColorValue(c.B())
+	return ScaledColorValue(c.R()), ScaledColorValue(c.G()), ScaledColorValue(c.B())
 }

@@ -1,6 +1,10 @@
 package projectile
 
 import (
+	"image"
+	"image/color"
+	"image/color/palette"
+	"log"
 	"math"
 	"sync"
 
@@ -51,30 +55,94 @@ func (s *Scene) Draw(t int) viz.Canvas {
 	return c
 }
 
+func (s *Scene) DrawRGBA(t int) *image.Paletted {
+	p := s.ProjectileSnapshots[t]
+	x := int(p.Pos.X)
+	y := int(p.Pos.Y)
+	img := image.NewPaletted(image.Rect(0, 0, int(s.MaxWidth), int(s.MaxHeight)), palette.Plan9)
+	for oy := 0; oy < 4; oy++ {
+		for ox := 0; ox < 4; ox++ {
+			img.Set(
+				x+ox,
+				int(s.MaxHeight)-(y+oy),
+				color.RGBA{
+					uint8(viz.ScaledColorValue(s.DefaultColor.R())),
+					uint8(viz.ScaledColorValue(s.DefaultColor.G())),
+					uint8(viz.ScaledColorValue(s.DefaultColor.B())),
+					0,
+				},
+			)
+		}
+	}
+	return img
+}
+
 func (s *Scene) DrawLast() viz.Canvas {
 	return s.Draw(len(s.ProjectileSnapshots) - 1)
 }
 
 func (s *Scene) DrawAll() []viz.Canvas {
 	res := []viz.Canvas{}
-	cs := make(map[int]viz.Canvas)
+	cs := sync.Map{}
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(s.ProjectileSnapshots))
 	bar := progressbar.Default(int64(len(s.ProjectileSnapshots)))
-	bar.Describe("Drawing canvases")
+	bar.Describe("Drawing scene")
 
 	for i := range s.ProjectileSnapshots {
 		t := i
 		go func() {
-			cs[t] = s.Draw(t)
+			cs.Store(t, s.Draw(t))
 			bar.Add(1)
 			wg.Done()
 		}()
 	}
 	wg.Wait()
+
 	for i := range s.ProjectileSnapshots {
-		res = append(res, cs[i])
+		v, ok := cs.Load(i)
+		if ok {
+			if c, ok := v.(viz.Canvas); ok {
+				res = append(res, c)
+			}
+		}
+		if !ok {
+			log.Fatal("Map read failed for snapshot", i)
+		}
+	}
+	return res
+}
+
+func (s *Scene) DrawAllRGBA() []*image.Paletted {
+	res := []*image.Paletted{}
+	imgs := sync.Map{}
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(s.ProjectileSnapshots))
+	bar := progressbar.Default(int64(len(s.ProjectileSnapshots)))
+	bar.Describe("Drawing scene")
+
+	for i := range s.ProjectileSnapshots {
+		t := i
+		go func() {
+			imgs.Store(t, s.DrawRGBA(t))
+			bar.Add(1)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	for i := range s.ProjectileSnapshots {
+		v, ok := imgs.Load(i)
+		if ok {
+			if img, ok := v.(*image.Paletted); ok {
+				res = append(res, img)
+			}
+		}
+		if !ok {
+			log.Fatal("Map read failed for snapshot", i)
+		}
 	}
 	return res
 }

@@ -52,10 +52,10 @@ func simulateProjectile(w http.ResponseWriter, r *http.Request) {
 		MaxWidth:            5,
 		DefaultColor:        viz.InitColor(255, 255, 0),
 	}
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 50; i++ {
 		scene.Tick()
 	}
-	viz.EncodeGIF(w, scene.DrawAll())
+	viz.EncodeGIF(w, scene.DrawAllRGBA())
 	log.Println("Done simulating")
 }
 
