@@ -21,9 +21,10 @@ func main() {
 }
 
 func run(ctx context.Context) error {
+	log.Println("Authorized github email", os.Getenv("EMAIL"))
 	tun, err := ngrok.Listen(ctx,
 		config.HTTPEndpoint(
-			config.WithOAuth("github", config.WithAllowOAuthEmail("kyle@krwenholz.com")),
+			config.WithOAuth("github", config.WithAllowOAuthEmail(os.Getenv("EMAIL"))),
 			config.WithDomain(os.Getenv("DOMAIN")),
 		),
 		ngrok.WithAuthtokenFromEnv(),
@@ -52,7 +53,7 @@ func simulateProjectile(w http.ResponseWriter, r *http.Request) {
 		MaxWidth:            5,
 		DefaultColor:        viz.InitColor(255, 255, 0),
 	}
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 200; i++ {
 		scene.Tick()
 	}
 	viz.EncodeGIF(w, scene.DrawAllRGBA())

@@ -60,8 +60,8 @@ func (s *Scene) DrawRGBA(t int) *image.Paletted {
 	x := int(p.Pos.X)
 	y := int(p.Pos.Y)
 	img := image.NewPaletted(image.Rect(0, 0, int(s.MaxWidth), int(s.MaxHeight)), palette.Plan9)
-	for oy := 0; oy < 4; oy++ {
-		for ox := 0; ox < 4; ox++ {
+	for oy := 0; oy < 6; oy++ {
+		for ox := 0; ox < 6; ox++ {
 			img.Set(
 				x+ox,
 				int(s.MaxHeight)-(y+oy),

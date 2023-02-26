@@ -11,7 +11,7 @@ func EncodeGIF(w io.Writer, imgs []*image.Paletted) {
 	disposals := []byte{}
 
 	for range imgs {
-		delays = append(delays, 50)
+		delays = append(delays, 10)
 		disposals = append(disposals, gif.DisposalPrevious)
 	}
 	g := gif.GIF{
