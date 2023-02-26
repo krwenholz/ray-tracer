@@ -1,12 +1,14 @@
 package viz
 
+import "math"
+
 type Canvas struct {
 	Height int
 	Width  int
 	pixels [][]Color
 }
 
-func InitCanvas(h, w int) Canvas {
+func InitCanvas(w, h int) Canvas {
 	ps := make([][]Color, h)
 	for i := 0; i < h; i++ {
 		ps[i] = make([]Color, w)
@@ -23,4 +25,8 @@ func (c *Canvas) Pixel(x, y int) Color {
 
 func (c *Canvas) SetPixel(col Color, x, y int) {
 	c.pixels[y][x] = col
+}
+
+func scaledColorValue(v float64) int {
+	return int(math.Round(math.Max(math.Min(v*255, 255), 0)))
 }

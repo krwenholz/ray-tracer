@@ -2,12 +2,16 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"golang.ngrok.com/ngrok"
 	"golang.ngrok.com/ngrok/config"
+	"happymonday.dev/ray-tracer/src/projectile"
+	"happymonday.dev/ray-tracer/src/tuples"
+	"happymonday.dev/ray-tracer/src/viz"
 )
 
 func main() {
@@ -30,9 +34,47 @@ func run(ctx context.Context) error {
 
 	log.Println("tunnel created:", tun.URL())
 
-	return http.Serve(tun, http.HandlerFunc(handler))
+	http.HandleFunc("/main.go", getMainGo)
+	http.HandleFunc("/simulateProjectile", simulateProjectile)
+	return http.Serve(tun, nil)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func getMainGo(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./main.go")
+}
+
+func simulateProjectile(w http.ResponseWriter, r *http.Request) {
+	scene := projectile.Scene{
+		ProjectileSnapshots: []projectile.Projectile{{Pos: tuples.InitPoint(0, 1, 0), Velocity: tuples.InitVector(1, 1.8, 0).Normalize().MultiplyScalar(11.25)}},
+		E:                   projectile.Environment{Gravity: tuples.InitVector(0, -0.1, 0), Wind: tuples.InitVector(-0.01, 0, 0)},
+		MaxHeight:           5,
+		MaxWidth:            5,
+		DefaultColor:        viz.InitColor(255, 255, 0),
+	}
+	log.Println("Simulating scene")
+	for i := 0; i < 100; i++ {
+		scene.Tick()
+	}
+	log.Println("Rendering GIF output")
+	viz.EncodeGIF(w, scene.DrawAll())
+	log.Println("Done")
+}
+
+func writeTemp(s string, t string) string {
+	f, err := os.CreateTemp("", fmt.Sprintf("ray-tracer-*.%s", t))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// close and remove the temporary file at the end of the program
+	defer f.Close()
+
+	// write data to the temporary file
+	data := []byte(s)
+	if _, err := f.Write(data); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Print("tmp file written ", f.Name())
+	return f.Name()
 }

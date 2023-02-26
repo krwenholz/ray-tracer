@@ -7,7 +7,7 @@ import (
 )
 
 func TestInitCanvas(t *testing.T) {
-	c := InitCanvas(10, 20)
+	c := InitCanvas(20, 10)
 	assert.Equal(t, c.Width, 20)
 	assert.Equal(t, c.Height, 10)
 
@@ -20,7 +20,7 @@ func TestInitCanvas(t *testing.T) {
 }
 
 func TestSetColor(t *testing.T) {
-	c := InitCanvas(10, 20)
+	c := InitCanvas(20, 10)
 
 	assert.True(t, c.Pixel(2, 3).Eq(InitColor(0, 0, 0)))
 
