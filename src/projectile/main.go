@@ -4,6 +4,7 @@ import (
 	"math"
 	"sync"
 
+	progressbar "github.com/schollz/progressbar/v3"
 	"happymonday.dev/ray-tracer/src/tuples"
 	"happymonday.dev/ray-tracer/src/viz"
 )
@@ -57,12 +58,17 @@ func (s *Scene) DrawLast() viz.Canvas {
 func (s *Scene) DrawAll() []viz.Canvas {
 	res := []viz.Canvas{}
 	cs := make(map[int]viz.Canvas)
+
 	wg := sync.WaitGroup{}
 	wg.Add(len(s.ProjectileSnapshots))
+	bar := progressbar.Default(int64(len(s.ProjectileSnapshots)))
+	bar.Describe("Drawing canvases")
+
 	for i := range s.ProjectileSnapshots {
 		t := i
 		go func() {
 			cs[t] = s.Draw(t)
+			bar.Add(1)
 			wg.Done()
 		}()
 	}

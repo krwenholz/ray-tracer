@@ -44,6 +44,7 @@ func getMainGo(w http.ResponseWriter, r *http.Request) {
 }
 
 func simulateProjectile(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting simulation")
 	scene := projectile.Scene{
 		ProjectileSnapshots: []projectile.Projectile{{Pos: tuples.InitPoint(0, 1, 0), Velocity: tuples.InitVector(1, 1.8, 0).Normalize().MultiplyScalar(11.25)}},
 		E:                   projectile.Environment{Gravity: tuples.InitVector(0, -0.1, 0), Wind: tuples.InitVector(-0.01, 0, 0)},
@@ -51,13 +52,11 @@ func simulateProjectile(w http.ResponseWriter, r *http.Request) {
 		MaxWidth:            5,
 		DefaultColor:        viz.InitColor(255, 255, 0),
 	}
-	log.Println("Simulating scene")
 	for i := 0; i < 100; i++ {
 		scene.Tick()
 	}
-	log.Println("Rendering GIF output")
 	viz.EncodeGIF(w, scene.DrawAll())
-	log.Println("Done")
+	log.Println("Done simulating")
 }
 
 func writeTemp(s string, t string) string {
