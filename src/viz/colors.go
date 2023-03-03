@@ -3,11 +3,11 @@ package viz
 import "happymonday.dev/ray-tracer/src/tuples"
 
 type Color struct {
-	tuples.Tuple
+	*tuples.Tuple
 }
 
 func InitColor(r, g, b float64) Color {
-	return Color{tuples.Tuple{X: r, Y: g, Z: b, W: 0}}
+	return Color{&tuples.Tuple{X: r, Y: g, Z: b, W: 0}}
 }
 
 func (c Color) R() float64 {
@@ -35,7 +35,7 @@ func (c Color) MultiplyScalar(s float64) Color {
 }
 
 func (c Color) Multiply(c2 Color) Color {
-	return Color{tuples.Tuple{X: c.R() * c2.R(), Y: c.G() * c2.G(), Z: c.B() * c2.B(), W: 0}}
+	return Color{&tuples.Tuple{X: c.R() * c2.R(), Y: c.G() * c2.G(), Z: c.B() * c2.B(), W: 0}}
 }
 
 func (c Color) Eq(c2 Color) bool {

@@ -71,18 +71,18 @@ func TestTupleMultiply(t *testing.T) {
 	a := InitVector(1, 2, 3)
 	assert.True(t, a.MultiplyScalar(2).Eq(InitVector(2, 4, 6)), "vector")
 	b := Tuple{1, -2, 3, -4}
-	assert.True(t, b.MultiplyScalar(3.5).Eq(Tuple{3.5, -7, 10.5, -14}), "scalar")
-	assert.True(t, b.MultiplyScalar(0.5).Eq(Tuple{0.5, -1, 1.5, -2}), "fraction")
+	assert.True(t, b.MultiplyScalar(3.5).Eq(&Tuple{3.5, -7, 10.5, -14}), "scalar")
+	assert.True(t, b.MultiplyScalar(0.5).Eq(&Tuple{0.5, -1, 1.5, -2}), "fraction")
 }
 
 func TestTupleDivide(t *testing.T) {
 	b := Tuple{1, -2, 3, -4}
-	assert.True(t, b.Divide(2).Eq(Tuple{0.5, -1, 1.5, -2}))
+	assert.True(t, b.Divide(2).Eq(&Tuple{0.5, -1, 1.5, -2}))
 }
 
 func TestVectorMagnitude(t *testing.T) {
 	type opt struct {
-		v Tuple
+		v *Tuple
 		m float64
 		s string
 	}
@@ -101,8 +101,8 @@ func TestVectorMagnitude(t *testing.T) {
 
 func TestVectorNormalize(t *testing.T) {
 	type opt struct {
-		v Tuple
-		r Tuple
+		v *Tuple
+		r *Tuple
 		s string
 	}
 	vs := []opt{
@@ -117,8 +117,8 @@ func TestVectorNormalize(t *testing.T) {
 
 func TestVectorDotProduct(t *testing.T) {
 	type opt struct {
-		v1 Tuple
-		v2 Tuple
+		v1 *Tuple
+		v2 *Tuple
 		p  float64
 		s  string
 	}
@@ -132,9 +132,9 @@ func TestVectorDotProduct(t *testing.T) {
 
 func TestVectorCrossProduct(t *testing.T) {
 	type opt struct {
-		v1 Tuple
-		v2 Tuple
-		r  Tuple
+		v1 *Tuple
+		v2 *Tuple
+		r  *Tuple
 		s  string
 	}
 	vs := []opt{

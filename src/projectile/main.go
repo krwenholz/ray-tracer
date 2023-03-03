@@ -14,13 +14,13 @@ import (
 )
 
 type Projectile struct {
-	Pos      tuples.Tuple
-	Velocity tuples.Tuple
+	Pos      *tuples.Tuple
+	Velocity *tuples.Tuple
 }
 
 type Environment struct {
-	Gravity tuples.Tuple
-	Wind    tuples.Tuple
+	Gravity *tuples.Tuple
+	Wind    *tuples.Tuple
 }
 
 type Scene struct {
