@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"happymonday.dev/ray-tracer/src/maths"
 	"happymonday.dev/ray-tracer/src/tuples"
 )
 
@@ -53,6 +54,26 @@ func InitMatrix(s string) *Matrix {
 	}
 }
 
+func InitMatrixIdentity(s int) *Matrix {
+	rows := [][]float64{}
+	for r := 0; r < s; r++ {
+		row := []float64{}
+		for c := 0; c < s; c++ {
+			v := 0.0
+			if c == r {
+				v = 1.0
+			}
+			row = append(row, v)
+		}
+		rows = append(rows, row)
+	}
+	return &Matrix{
+		data:   rows,
+		height: s,
+		width:  s,
+	}
+}
+
 func (m *Matrix) String() string {
 	rows := []string{}
 	for _, r := range m.data {
@@ -79,7 +100,7 @@ func (m *Matrix) Equals(m2 *Matrix) bool {
 	}
 	for i := 0; i < m.height; i++ {
 		for j := 0; j < m.width; j++ {
-			if m.At(i, j) != m2.At(i, j) {
+			if !maths.FuzzyEquals(m.At(i, j), m2.At(i, j)) {
 				return false
 			}
 		}
@@ -107,4 +128,85 @@ func (m *Matrix) Multiply(m2 *Matrix) *Matrix {
 func (m *Matrix) MultiplyTuple(t *tuples.Tuple) *tuples.Tuple {
 	m2 := m.Multiply(&Matrix{[][]float64{{t.X}, {t.Y}, {t.Z}, {t.W}}, 4, 1})
 	return &tuples.Tuple{X: m2.At(0, 0), Y: m2.At(1, 0), Z: m2.At(2, 0), W: m2.At(3, 0)}
+}
+
+func (m *Matrix) Transpose() *Matrix {
+	res := InitEmptyMatrix(m.height, m.width)
+	for i := 0; i < m.height; i++ {
+		for j := 0; j < m.width; j++ {
+			res.Set(i, j, m.At(j, i))
+		}
+	}
+	return res
+}
+
+func (m *Matrix) Submatrix(r, c int) *Matrix {
+	res := InitEmptyMatrix(m.height-1, m.width-1)
+	for i := 0; i < m.height; i++ {
+		for j := 0; j < m.width; j++ {
+			if i == r || j == c {
+				continue
+			}
+			ni := i
+			nj := j
+			if ni > r {
+				ni -= 1
+			}
+			if nj > c {
+				nj -= 1
+			}
+			res.Set(ni, nj, m.At(i, j))
+		}
+	}
+	return res
+}
+
+func (m *Matrix) Determinant() float64 {
+	if m.height == 2 {
+		return m.At(0, 0)*m.At(1, 1) - m.At(0, 1)*m.At(1, 0)
+	}
+
+	det := 0.0
+	for i := 0; i < m.width; i++ {
+		det += m.At(0, i) * m.Cofactor(0, i)
+	}
+
+	return det
+}
+
+func (m *Matrix) Minor(r, c int) float64 {
+	return m.Submatrix(r, c).Determinant()
+}
+
+func (m *Matrix) Cofactor(r, c int) float64 {
+	s := 1.0
+	if (c+r)%2 == 1 {
+		s = -1
+	}
+	return s * m.Minor(r, c)
+}
+
+func (m *Matrix) IsInvertible() bool {
+	return m.Determinant() != 0
+}
+
+func (m *Matrix) Inverse() *Matrix {
+	if !m.IsInvertible() {
+		log.Fatal("Attempted inverting a non-invertible matrix")
+	}
+	cofactors := InitEmptyMatrix(m.height, m.width)
+	for r := 0; r < m.height; r++ {
+		for c := 0; c < m.width; c++ {
+			cofactors.Set(r, c, m.Cofactor(r, c))
+		}
+	}
+	determinant := m.Determinant()
+	inverse := InitEmptyMatrix(m.height, m.width)
+	for r := 0; r < m.height; r++ {
+		for c := 0; c < m.width; c++ {
+			inverse.Set(r, c, cofactors.At(c, r)/determinant)
+		}
+	}
+
+	return inverse
 }

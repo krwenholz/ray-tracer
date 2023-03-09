@@ -39,5 +39,5 @@ func (c Color) Multiply(c2 Color) Color {
 }
 
 func (c Color) Eq(c2 Color) bool {
-	return c.Tuple.Eq(c2.Tuple)
+	return c.Tuple.Equals(c2.Tuple)
 }

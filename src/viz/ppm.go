@@ -2,6 +2,7 @@ package viz
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 )
@@ -10,7 +11,7 @@ const MaxColorValue = 255
 
 func CanvasToPPM(c Canvas) string {
 	res := []string{"P3", fmt.Sprintf("%d %d", c.Width, c.Height), fmt.Sprint(MaxColorValue)}
-	rows := make(map[int][]string)
+	rows := sync.Map{}
 	wg := sync.WaitGroup{}
 	wg.Add(c.Height)
 	for i := 0; i < c.Height; i++ {
@@ -31,15 +32,22 @@ func CanvasToPPM(c Canvas) string {
 				}
 			}
 			row = append(row, strings.TrimSpace(curStr))
-			rows[rowI] = row
+			rows.Store(rowI, row)
 			wg.Done()
 		}()
 	}
 	wg.Wait()
 	for i := 0; i < c.Height; i++ {
-		row := rows[i]
-		for _, s := range row {
-			res = append(res, s)
+		v, ok := rows.Load(i)
+		if ok {
+			if row, ok := v.([]string); ok {
+				for _, s := range row {
+					res = append(res, s)
+				}
+			}
+		}
+		if !ok {
+			log.Fatal("Map read failed for snapshot", i)
 		}
 	}
 	return strings.Join(res, "\n") + "\n"

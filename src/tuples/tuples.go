@@ -45,8 +45,8 @@ func (t *Tuple) CrossProduct(t2 *Tuple) *Tuple {
 	return InitVector(t.Y*t2.Z-t.Z*t2.Y, t.Z*t2.X-t.X*t2.Z, t.X*t2.Y-t.Y*t2.X)
 }
 
-func (t *Tuple) Eq(t2 *Tuple) bool {
-	return maths.FuzzyEq(t.X, t2.X) && maths.FuzzyEq(t.Y, t2.Y) && maths.FuzzyEq(t.Z, t2.Z) && maths.FuzzyEq(t.W, t2.W)
+func (t *Tuple) Equals(t2 *Tuple) bool {
+	return maths.FuzzyEquals(t.X, t2.X) && maths.FuzzyEquals(t.Y, t2.Y) && maths.FuzzyEquals(t.Z, t2.Z) && maths.FuzzyEquals(t.W, t2.W)
 }
 
 func (t *Tuple) Negate() *Tuple {
