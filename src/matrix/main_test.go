@@ -1,7 +1,6 @@
 package matrix
 
 import (
-	"log"
 	"strings"
 	"testing"
 
@@ -322,8 +321,6 @@ func TestInverse(t *testing.T) {
 		},
 	}
 	for _, o := range opts {
-		log.Println(o.inverse)
-		log.Println(o.m.Inverse())
 		assert.True(t, o.inverse.Equals(o.m.Inverse()))
 	}
 }

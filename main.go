@@ -9,6 +9,7 @@ import (
 
 	"golang.ngrok.com/ngrok"
 	"golang.ngrok.com/ngrok/config"
+	"happymonday.dev/ray-tracer/src/clock"
 	"happymonday.dev/ray-tracer/src/projectile"
 	"happymonday.dev/ray-tracer/src/tuples"
 	"happymonday.dev/ray-tracer/src/viz"
@@ -36,7 +37,8 @@ func run(ctx context.Context) error {
 	log.Println("tunnel created:", tun.URL())
 
 	http.HandleFunc("/main.go", getMainGo)
-	http.HandleFunc("/simulateProjectile", simulateProjectile)
+	http.HandleFunc("/projectile", simulateProjectile)
+	http.HandleFunc("/clock", simulateClock)
 	return http.Serve(tun, nil)
 }
 
@@ -46,7 +48,7 @@ func getMainGo(w http.ResponseWriter, r *http.Request) {
 
 func simulateProjectile(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting simulation")
-	scene := projectile.Scene{
+	scene := &projectile.Scene{
 		ProjectileSnapshots: []projectile.Projectile{{Pos: tuples.InitPoint(0, 1, 0), Velocity: tuples.InitVector(1, 1.8, 0).Normalize().MultiplyScalar(11.25)}},
 		E:                   projectile.Environment{Gravity: tuples.InitVector(0, -0.1, 0), Wind: tuples.InitVector(-0.01, 0, 0)},
 		MaxHeight:           5,
@@ -56,7 +58,17 @@ func simulateProjectile(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < 200; i++ {
 		scene.Tick()
 	}
-	viz.EncodeGIF(w, scene.DrawAllRGBA())
+	viz.EncodeGIF(w, viz.DrawAllRGBA(scene), 10)
+	log.Println("Done simulating")
+}
+
+func simulateClock(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting simulation")
+	c := clock.Init(200, 200, viz.InitColor(255, 255, 0))
+	for i := 0; i < 24; i++ {
+		c.Tick()
+	}
+	viz.EncodeGIF(w, viz.DrawAllRGBA(c), 50)
 	log.Println("Done simulating")
 }
 
