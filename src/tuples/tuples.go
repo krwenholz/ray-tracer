@@ -20,6 +20,12 @@ func InitPoint(x, y, z float64) *Tuple {
 func InitVector(x, y, z float64) *Tuple {
 	return &Tuple{x, y, z, 0}
 }
+
+func InitVectorFromPoints(s, d *Tuple) *Tuple {
+	v := s.Subtract(d).Normalize()
+	return InitVector(v.X, v.Y, v.Z)
+}
+
 func (t *Tuple) Add(t2 *Tuple) *Tuple {
 	return &Tuple{t.X + t2.X, t.Y + t2.Y, t.Z + t2.Z, t.W + t2.W}
 }

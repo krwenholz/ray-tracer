@@ -3,14 +3,18 @@ package main
 import (
 	"context"
 	"fmt"
+	"image"
 	"log"
 	"net/http"
 	"os"
 
 	"golang.ngrok.com/ngrok"
 	"golang.ngrok.com/ngrok/config"
+	"happymonday.dev/ray-tracer/src/basic_ray_cast"
 	"happymonday.dev/ray-tracer/src/clock"
+	"happymonday.dev/ray-tracer/src/matrix"
 	"happymonday.dev/ray-tracer/src/projectile"
+	"happymonday.dev/ray-tracer/src/shapes"
 	"happymonday.dev/ray-tracer/src/tuples"
 	"happymonday.dev/ray-tracer/src/viz"
 )
@@ -39,6 +43,7 @@ func run(ctx context.Context) error {
 	http.HandleFunc("/main.go", getMainGo)
 	http.HandleFunc("/projectile", simulateProjectile)
 	http.HandleFunc("/clock", simulateClock)
+	http.HandleFunc("/basic_cast", basicRayCast)
 	return http.Serve(tun, nil)
 }
 
@@ -65,10 +70,31 @@ func simulateProjectile(w http.ResponseWriter, r *http.Request) {
 func simulateClock(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting simulation")
 	c := clock.Init(200, 200, viz.InitColor(255, 255, 0))
-	for i := 0; i < 24; i++ {
-		c.Tick()
-	}
 	viz.EncodeGIF(w, viz.DrawAllRGBA(c), 50)
+	log.Println("Done simulating")
+}
+
+func basicRayCast(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting basic cast")
+	s := shapes.InitSphere()
+	s.SetTransform(
+		matrix.Chain(
+			matrix.Scaling(2, 2, 2),
+			matrix.Translation(100, 100, 0),
+		),
+	)
+	c := basic_ray_cast.Init(200, 200, viz.InitColor(255, 255, 0), s)
+	viz.EncodeGIF(
+		w,
+		[]*image.Paletted{
+			c.Shine(tuples.InitPoint(80, 80, -30)),
+			c.Shine(tuples.InitPoint(90, 90, -30)),
+			c.Shine(tuples.InitPoint(100, 100, -30)),
+			c.Shine(tuples.InitPoint(110, 110, -30)),
+			c.Shine(tuples.InitPoint(120, 120, -30)),
+		},
+		50,
+	)
 	log.Println("Done simulating")
 }
 
