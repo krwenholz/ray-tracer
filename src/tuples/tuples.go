@@ -66,3 +66,7 @@ func (t *Tuple) MultiplyScalar(s float64) *Tuple {
 func (t *Tuple) Divide(s float64) *Tuple {
 	return t.MultiplyScalar(1 / s)
 }
+
+func (t *Tuple) Reflect(n *Tuple) *Tuple {
+	return t.Subtract(n.MultiplyScalar(2 * t.DotProduct(n)))
+}

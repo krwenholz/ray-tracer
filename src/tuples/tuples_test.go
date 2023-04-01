@@ -145,3 +145,30 @@ func TestVectorCrossProduct(t *testing.T) {
 		assert.True(t, o.v2.CrossProduct(o.v1).Equals(o.r.Negate()), o.s)
 	}
 }
+
+func TestReflectingVectors(t *testing.T) {
+	type opt struct {
+		v   *Tuple
+		n   *Tuple
+		res *Tuple
+		s   string
+	}
+	vs := []opt{
+		{
+			InitVector(1, -1, 0),
+			InitVector(0, 1, 0),
+			InitVector(1, 1, 0),
+			"Reflecting a vector approaching at 45 degrees",
+		},
+		{
+			InitVector(0, -1, 0),
+			InitVector(math.Sqrt(2)/2, math.Sqrt(2)/2, 0),
+			InitVector(1, 0, 0),
+			"Reflecting a vector off a scaled surface",
+		},
+	}
+	for _, o := range vs {
+		r := o.v.Reflect(o.n)
+		assert.True(t, o.res.Equals(r), o.s)
+	}
+}
