@@ -59,3 +59,11 @@ func (s *Sphere) SetTransform(t *matrix.Matrix) {
 	s.Transform = t
 	s.TransformInverse = t.Inverse()
 }
+
+func (s *Sphere) NormalAt(p *tuples.Tuple) *tuples.Tuple {
+	objectPoint := s.TransformInverse.MultiplyTuple(p)
+	objectNormal := objectPoint.Subtract(tuples.InitPoint(0, 0, 0))
+	worldNormal := s.TransformInverse.Transpose().MultiplyTuple(objectNormal)
+	worldNormal.W = 0
+	return worldNormal.Normalize()
+}

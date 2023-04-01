@@ -1,6 +1,7 @@
 package shapes
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -87,4 +88,74 @@ func TestIntersectingATranslatedSphere(t *testing.T) {
 	s.SetTransform(matrix.Translation(5, 0, 0))
 	xs := s.Intersect(r)
 	assert.Equal(t, 0, len(xs.Intersections))
+}
+
+func TestNormalOnASphere(t *testing.T) {
+	type opt struct {
+		s string
+		p *tuples.Tuple
+		v *tuples.Tuple
+	}
+	opts := []opt{
+		{
+			s: "The normal on a sphere at a point on the x axis",
+			p: tuples.InitPoint(1, 0, 0),
+			v: tuples.InitVector(1, 0, 0),
+		},
+		{
+			s: "The normal on a sphere at a point on the y axis",
+			p: tuples.InitPoint(0, 1, 0),
+			v: tuples.InitVector(0, 1, 0),
+		},
+		{
+			s: "The normal on a sphere at a point on the z axis",
+			p: tuples.InitPoint(0, 0, 1),
+			v: tuples.InitVector(0, 0, 1),
+		},
+		{
+			s: "The normal on a sphere at a nonaxial point",
+			p: tuples.InitPoint(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3),
+			v: tuples.InitVector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3),
+		},
+	}
+	for _, o := range opts {
+		s := InitSphere()
+		n := s.NormalAt(o.p)
+		assert.True(t, o.v.Equals(n), o.s)
+	}
+}
+
+func TestNormalIsANormalizedVector(t *testing.T) {
+	s := InitSphere()
+	n := s.NormalAt(tuples.InitPoint(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)))
+	assert.True(t, n.Normalize().Equals(n))
+}
+
+func TestNormalOnATransformedSphere(t *testing.T) {
+	type opt struct {
+		s string
+		t *matrix.Matrix
+		p *tuples.Tuple
+		v *tuples.Tuple
+	}
+	opts := []opt{
+		{
+			s: "Computing the normal on a translated sphere",
+			t: matrix.Translation(0, 1, 0),
+			p: tuples.InitPoint(0, 1.70711, -0.70711),
+			v: tuples.InitVector(0, 0.70711, -0.70711),
+		},
+		{
+			s: "Computing the normal on a transformed sphere",
+			t: matrix.Scaling(1, 0.5, 1).Multiply(matrix.RotationZ(1 / 5)),
+			p: tuples.InitPoint(0, math.Sqrt(2)/2, -math.Sqrt(2)/2),
+			v: tuples.InitVector(0, 0.97014, -0.24254),
+		},
+	}
+	for _, o := range opts {
+		s := InitSphere()
+		s.SetTransform(o.t)
+		n := s.NormalAt(o.p)
+		assert.True(t, o.v.Equals(n), o.s)
+	}
 }
