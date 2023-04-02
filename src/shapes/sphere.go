@@ -13,11 +13,18 @@ type Sphere struct {
 	Id               ksuid.KSUID
 	Transform        *matrix.Matrix
 	TransformInverse *matrix.Matrix
+	Material         *Material
 	xs               sync.Map
 }
 
 func InitSphere() *Sphere {
-	return &Sphere{ksuid.New(), matrix.InitMatrixIdentity(4), matrix.InitMatrixIdentity(4), sync.Map{}}
+	return &Sphere{
+		ksuid.New(),
+		matrix.InitMatrixIdentity(4),
+		matrix.InitMatrixIdentity(4),
+		DefaultMaterial(),
+		sync.Map{},
+	}
 }
 
 func (s *Sphere) Intersect(r *Ray) *Intersections {

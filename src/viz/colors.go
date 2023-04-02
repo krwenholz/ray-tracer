@@ -10,6 +10,10 @@ func InitColor(r, g, b float64) Color {
 	return Color{&tuples.Tuple{X: r, Y: g, Z: b, W: 0}}
 }
 
+func Black() Color {
+	return Color{&tuples.Tuple{X: 0, Y: 0, Z: 0, W: 0}}
+}
+
 func (c Color) R() float64 {
 	return c.X
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"happymonday.dev/ray-tracer/src/matrix"
 	"happymonday.dev/ray-tracer/src/tuples"
+	"happymonday.dev/ray-tracer/src/viz"
 )
 
 func TestARayIntersectsASphereAtTwoPoints(t *testing.T) {
@@ -158,4 +159,16 @@ func TestNormalOnATransformedSphere(t *testing.T) {
 		n := s.NormalAt(o.p)
 		assert.True(t, o.v.Equals(n), o.s)
 	}
+}
+
+func TestSphereHasADefaultMaterial(t *testing.T) {
+	s := InitSphere()
+	assert.True(t, s.Material.Equals(DefaultMaterial()))
+}
+
+func TestSphereMayBeAssignedAMaterial(t *testing.T) {
+	s := InitSphere()
+	s.Material = InitMaterial(viz.Black(), 1, 1, 1, 1)
+	m := InitMaterial(viz.Black(), 1, 1, 1, 1)
+	assert.True(t, s.Material.Equals(m))
 }
