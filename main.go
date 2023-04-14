@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"golang.ngrok.com/ngrok"
 	"golang.ngrok.com/ngrok/config"
 	"happymonday.dev/ray-tracer/src/basic_ray_cast"
@@ -37,6 +38,8 @@ func run(ctx context.Context) error {
 		),
 		ngrok.WithAuthtokenFromEnv(),
 	)
+	r := gin.Default()
+	r.Run()
 	if err != nil {
 		return err
 	}
