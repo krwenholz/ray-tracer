@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"image"
-	"image/jpeg"
 	"log"
 	"os"
 
@@ -12,10 +10,7 @@ import (
 	"golang.ngrok.com/ngrok/config"
 	"happymonday.dev/ray-tracer/src/basic_ray_cast"
 	"happymonday.dev/ray-tracer/src/clock"
-	"happymonday.dev/ray-tracer/src/lights"
-	"happymonday.dev/ray-tracer/src/matrix"
 	"happymonday.dev/ray-tracer/src/projectile"
-	"happymonday.dev/ray-tracer/src/shapes"
 	"happymonday.dev/ray-tracer/src/three_d_ray_cast"
 	"happymonday.dev/ray-tracer/src/tuples"
 	"happymonday.dev/ray-tracer/src/viz"
@@ -46,10 +41,10 @@ func run(ctx context.Context) error {
 	r.GET("/main.go", handleMainGo)
 	r.GET("/projectile", handleProjectile)
 	r.GET("/clock", handleClock)
-	r.GET("/basic_cast", basicRayCast)
-	r.GET("/basic_3d", threeDRayCast)
-	r.GET("/basic_3d_light", threeDRayCastLightMoves)
-	r.GET("/basic_3d_jpeg", threeDRayCastLightJpeg)
+	r.GET("/basic_cast", basic_ray_cast.BasicRayCast)
+	r.GET("/basic_3d", three_d_ray_cast.ThreeDRayCast)
+	r.GET("/basic_3d_light", three_d_ray_cast.ThreeDRayCastLightMoves)
+	r.GET("/basic_3d_jpeg", three_d_ray_cast.ThreeDRayCastLightJpeg)
 	return r.RunListener(tun)
 }
 
@@ -72,98 +67,4 @@ func handleProjectile(c *gin.Context) {
 func handleClock(c *gin.Context) {
 	sim := clock.Init(200, 200, viz.InitColor(255, 255, 0))
 	viz.EncodeGIF(c.Writer, viz.DrawAllRGBA(sim), 50)
-}
-
-func basicRayCast(c *gin.Context) {
-	s := shapes.InitSphere()
-	s.SetTransform(
-		matrix.Chain(
-			matrix.Scaling(2, 2, 2),
-			matrix.Translation(100, 100, 0),
-		),
-	)
-	scene := basic_ray_cast.Init(200, 200, viz.InitColor(255, 255, 0), s)
-	viz.EncodeGIF(
-		c.Writer,
-		[]*image.Paletted{
-			scene.Shine(tuples.InitPoint(80, 80, -30)),
-			scene.Shine(tuples.InitPoint(90, 90, -30)),
-			scene.Shine(tuples.InitPoint(100, 100, -30)),
-			scene.Shine(tuples.InitPoint(110, 110, -30)),
-			scene.Shine(tuples.InitPoint(120, 120, -30)),
-		},
-		50,
-	)
-}
-
-func threeDRayCast(c *gin.Context) {
-	size := 500.0
-	s := shapes.InitSphere()
-	s.Material.Color = viz.InitColor(1, 0.2, 1)
-	s.SetTransform(
-		matrix.Chain(
-			matrix.Scaling(size/7, size/7, size/7),
-			matrix.Translation(size/2, size/2, size/5),
-		),
-	)
-	color := viz.InitColor(1, 1, 1)
-	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
-	rc := three_d_ray_cast.Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
-	imgs := []*image.Paletted{}
-	steps := 3.0
-	for i := 0.0; i < steps; i++ {
-		location := tuples.InitPoint(size/steps*i, size/steps*i, -size/4)
-		imgs = append(imgs, rc.Shine(location))
-	}
-	viz.EncodeGIF(
-		c.Writer,
-		imgs,
-		50,
-	)
-}
-
-func threeDRayCastLightMoves(c *gin.Context) {
-	size := 500.0
-	s := shapes.InitSphere()
-	s.Material.Color = viz.InitColor(1, 0.2, 1)
-	s.SetTransform(
-		matrix.Chain(
-			matrix.Scaling(size/7, size/7, size/7),
-			matrix.Translation(size/2, size/2, 5),
-		),
-	)
-	color := viz.InitColor(1, 1, 1)
-	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
-	rc := three_d_ray_cast.Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
-	step := 5.0
-	imgs := []*image.Paletted{}
-	for i := 0.0; i < 5; i++ {
-		imgs = append(imgs, rc.Shine(tuples.InitPoint(size/step*i, size/step*i, -size/4)))
-	}
-	viz.EncodeGIF(
-		c.Writer,
-		imgs,
-		50,
-	)
-}
-
-func threeDRayCastLightJpeg(c *gin.Context) {
-	size := 500.0
-	s := shapes.InitSphere()
-	s.Material.Color = viz.InitColor(1, 0.2, 1)
-	s.SetTransform(
-		matrix.Chain(
-			matrix.Scaling(size/7, size/7, size/7),
-			matrix.Translation(size/2, size/2, 5),
-		),
-	)
-	color := viz.InitColor(1, 1, 1)
-	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
-	rc := three_d_ray_cast.Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
-	img := rc.Shine(tuples.InitPoint(size/3, size/2, -size/4))
-	jpeg.Encode(
-		c.Writer,
-		img,
-		nil,
-	)
 }

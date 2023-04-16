@@ -6,6 +6,7 @@ import (
 	"image/color/palette"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	"github.com/schollz/progressbar/v3"
 	"happymonday.dev/ray-tracer/src/matrix"
 	"happymonday.dev/ray-tracer/src/shapes"
@@ -100,4 +101,26 @@ func (c *BasicCast) Width() int {
 
 func (c *BasicCast) Len() int {
 	return 1
+}
+
+func BasicRayCast(c *gin.Context) {
+	s := shapes.InitSphere()
+	s.SetTransform(
+		matrix.Chain(
+			matrix.Scaling(2, 2, 2),
+			matrix.Translation(100, 100, 0),
+		),
+	)
+	scene := Init(200, 200, viz.InitColor(255, 255, 0), s)
+	viz.EncodeGIF(
+		c.Writer,
+		[]*image.Paletted{
+			scene.Shine(tuples.InitPoint(80, 80, -30)),
+			scene.Shine(tuples.InitPoint(90, 90, -30)),
+			scene.Shine(tuples.InitPoint(100, 100, -30)),
+			scene.Shine(tuples.InitPoint(110, 110, -30)),
+			scene.Shine(tuples.InitPoint(120, 120, -30)),
+		},
+		50,
+	)
 }
