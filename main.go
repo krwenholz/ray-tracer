@@ -38,6 +38,7 @@ func run(ctx context.Context) error {
 
 	r := gin.Default()
 	r.Use(gin.ErrorLogger())
+	r.StaticFile("favicon.ico", "static/favicon.ico")
 	r.GET("/main.go", handleMainGo)
 	r.GET("/projectile", handleProjectile)
 	r.GET("/clock", handleClock)

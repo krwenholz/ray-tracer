@@ -3,8 +3,8 @@ package three_d_ray_cast
 import (
 	"image"
 	"image/color"
-	"image/color/palette"
 	"image/jpeg"
+	"net/http"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -37,8 +37,8 @@ func Init(h, w int, c viz.Color, s *shapes.Sphere, l *lights.PointLight) *BasicC
 	return &b
 }
 
-func (c *BasicCast) DrawRGBA(source *tuples.Tuple) *image.Paletted {
-	img := image.NewPaletted(image.Rect(0, 0, int(c.W), int(c.H)), palette.Plan9)
+func (c *BasicCast) DrawRGBA(source *tuples.Tuple) image.RGBA64Image {
+	img := image.NewRGBA64(image.Rect(0, 0, int(c.W), int(c.H)))
 	wg := sync.WaitGroup{}
 	wg.Add(c.Height() * c.Width())
 	bar := progressbar.Default(int64(c.Height() * c.Width()))
@@ -55,10 +55,10 @@ func (c *BasicCast) DrawRGBA(source *tuples.Tuple) *image.Paletted {
 						x,
 						y,
 						color.RGBA{
-							uint8(viz.ScaledColorValue(hitColor.R())),
-							uint8(viz.ScaledColorValue(hitColor.G())),
-							uint8(viz.ScaledColorValue(hitColor.B())),
-							0,
+							uint8(hitColor.RRGBA()),
+							uint8(hitColor.GRGBA()),
+							uint8(hitColor.BRGBA()),
+							0xff,
 						},
 					)
 				}
@@ -109,16 +109,18 @@ func ThreeDRayCast(c *gin.Context) {
 	color := viz.InitColor(1, 1, 1)
 	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
 	rc := Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
-	imgs := []*image.Paletted{}
-	steps := 3.0
+	imgs := []image.RGBA64Image{}
+	steps := 10.0
 	for i := 0.0; i < steps; i++ {
 		location := tuples.InitPoint(size/steps*i, size/steps*i, -size/4)
 		imgs = append(imgs, rc.DrawRGBA(location))
 	}
-	viz.EncodeGIF(
-		c.Writer,
-		imgs,
-		50,
+	data := viz.EncodeX264FromRBA64(int(size), int(size), 5, imgs)
+	c.Header("Content-Disposition", `attachment; filename=3d_ray_cast.264`)
+	c.Data(
+		http.StatusOK,
+		"video/H264",
+		data.Bytes(),
 	)
 }
 
@@ -135,15 +137,20 @@ func ThreeDRayCastLightMoves(c *gin.Context) {
 	color := viz.InitColor(1, 1, 1)
 	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
 	rc := Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
-	step := 5.0
-	imgs := []*image.Paletted{}
-	for i := 0.0; i < 5; i++ {
-		imgs = append(imgs, rc.DrawRGBA(tuples.InitPoint(size/step*i, size/step*i, -size/4)))
+	steps := 10.0
+	imgs := []image.RGBA64Image{}
+	location := tuples.InitPoint(size/2, size/2, -size/4)
+	for i := 0.0; i < steps; i++ {
+		ll := tuples.InitPoint(size/steps*i, size/steps*i, -size/4)
+		rc.Light = lights.InitPointLight(ll, &color)
+		imgs = append(imgs, rc.DrawRGBA(location))
 	}
-	viz.EncodeGIF(
-		c.Writer,
-		imgs,
-		50,
+	data := viz.EncodeX264FromRBA64(int(size), int(size), 5, imgs)
+	c.Header("Content-Disposition", `attachment; filename=3d_ray_cast_light_moves.264`)
+	c.Data(
+		http.StatusOK,
+		"video/H264",
+		data.Bytes(),
 	)
 }
 

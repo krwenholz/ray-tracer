@@ -49,9 +49,9 @@ func (c *Clock) DrawRGBA(t int) *image.Paletted {
 				x+ox,
 				int(c.H)-(y+oy),
 				color.RGBA{
-					uint8(viz.ScaledColorValue(c.DefaultColor.R())),
-					uint8(viz.ScaledColorValue(c.DefaultColor.G())),
-					uint8(viz.ScaledColorValue(c.DefaultColor.B())),
+					uint8(viz.ScaledColorValue256(c.DefaultColor.R())),
+					uint8(viz.ScaledColorValue256(c.DefaultColor.G())),
+					uint8(viz.ScaledColorValue256(c.DefaultColor.B())),
 					0,
 				},
 			)

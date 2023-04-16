@@ -56,9 +56,9 @@ func (s *Scene) DrawRGBA(t int) *image.Paletted {
 				x+ox,
 				s.Height()-(y+oy),
 				color.RGBA{
-					uint8(viz.ScaledColorValue(s.DefaultColor.R())),
-					uint8(viz.ScaledColorValue(s.DefaultColor.G())),
-					uint8(viz.ScaledColorValue(s.DefaultColor.B())),
+					uint8(viz.ScaledColorValue256(s.DefaultColor.R())),
+					uint8(viz.ScaledColorValue256(s.DefaultColor.G())),
+					uint8(viz.ScaledColorValue256(s.DefaultColor.B())),
 					0,
 				},
 			)

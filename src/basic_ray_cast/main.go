@@ -50,9 +50,9 @@ func (c *BasicCast) Shine(source *tuples.Tuple) *image.Paletted {
 						x,
 						y,
 						color.RGBA{
-							uint8(viz.ScaledColorValue(c.DefaultColor.R())),
-							uint8(viz.ScaledColorValue(c.DefaultColor.G())),
-							uint8(viz.ScaledColorValue(c.DefaultColor.B())),
+							uint8(viz.ScaledColorValue256(c.DefaultColor.R())),
+							uint8(viz.ScaledColorValue256(c.DefaultColor.G())),
+							uint8(viz.ScaledColorValue256(c.DefaultColor.B())),
 							0,
 						},
 					)
@@ -80,9 +80,9 @@ func (c *BasicCast) DrawRGBA() *image.Paletted {
 				x,
 				c.Height()-y,
 				color.RGBA{
-					uint8(viz.ScaledColorValue(c.DefaultColor.R())),
-					uint8(viz.ScaledColorValue(c.DefaultColor.G())),
-					uint8(viz.ScaledColorValue(c.DefaultColor.B())),
+					uint8(viz.ScaledColorValue256(c.DefaultColor.R())),
+					uint8(viz.ScaledColorValue256(c.DefaultColor.G())),
+					uint8(viz.ScaledColorValue256(c.DefaultColor.B())),
 					0,
 				},
 			)

@@ -27,6 +27,10 @@ func (c *Canvas) SetPixel(col Color, x, y int) {
 	c.pixels[y][x] = col
 }
 
-func ScaledColorValue(v float64) int {
+func ScaledColorValue256(v float64) int {
 	return int(math.Round(math.Max(math.Min(v*255, 255), 0)))
+}
+
+func ScaledColorValueRGBA(v float64) int {
+	return int(math.Round(math.Max(math.Min(v*0xff, 0xff), 0)))
 }

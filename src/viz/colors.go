@@ -1,6 +1,8 @@
 package viz
 
-import "happymonday.dev/ray-tracer/src/tuples"
+import (
+	"happymonday.dev/ray-tracer/src/tuples"
+)
 
 type Color struct {
 	*tuples.Tuple
@@ -44,4 +46,28 @@ func (c Color) Multiply(c2 Color) Color {
 
 func (c Color) Eq(c2 Color) bool {
 	return c.Tuple.Equals(c2.Tuple)
+}
+
+func (c Color) R256() int {
+	return ScaledColorValue256(c.R())
+}
+
+func (c Color) G256() int {
+	return ScaledColorValue256(c.G())
+}
+
+func (c Color) B256() int {
+	return ScaledColorValue256(c.B())
+}
+
+func (c Color) RRGBA() int {
+	return ScaledColorValueRGBA(c.R())
+}
+
+func (c Color) GRGBA() int {
+	return ScaledColorValueRGBA(c.G())
+}
+
+func (c Color) BRGBA() int {
+	return ScaledColorValueRGBA(c.B())
 }
