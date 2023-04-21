@@ -53,6 +53,6 @@ func CanvasToPPM(c Canvas) string {
 	return strings.Join(res, "\n") + "\n"
 }
 
-func ppmScaledColor(c Color) (int, int, int) {
+func ppmScaledColor(c *Color) (int, int, int) {
 	return ScaledColorValue256(c.R()), ScaledColorValue256(c.G()), ScaledColorValue256(c.B())
 }

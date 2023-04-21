@@ -19,11 +19,11 @@ var tock *matrix.Matrix = matrix.RotationZ(-1 / 12.0)
 type BasicCast struct {
 	H            int
 	W            int
-	DefaultColor viz.Color
+	DefaultColor *viz.Color
 	Sphere       *shapes.Sphere
 }
 
-func Init(h, w int, c viz.Color, s *shapes.Sphere) *BasicCast {
+func Init(h, w int, c *viz.Color, s *shapes.Sphere) *BasicCast {
 	b := BasicCast{
 		H:            h,
 		W:            w,

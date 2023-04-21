@@ -7,7 +7,7 @@ import (
 )
 
 type Material struct {
-	Color     viz.Color
+	Color     *viz.Color
 	Ambient   float64
 	Diffuse   float64
 	Specular  float64
@@ -22,11 +22,11 @@ func InitMaterial(c viz.Color, a, d, sp, sh float64) *Material {
 	if a < 0 || d < 0 || sp < 0 || sh < 0 {
 		log.Fatal("Material creation attempted with negative values", a, d, sp, sh)
 	}
-	return &Material{c, a, d, sp, sh}
+	return &Material{&c, a, d, sp, sh}
 }
 
 func (m *Material) Equals(m2 *Material) bool {
-	return (m.Color.Equals(m2.Color.Tuple) &&
+	return (m.Color.Equals(&m2.Color.Tuple) &&
 		m.Ambient == m2.Ambient &&
 		m.Diffuse == m2.Diffuse &&
 		m.Specular == m2.Specular &&

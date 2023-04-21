@@ -7,8 +7,7 @@ import (
 )
 
 func TestIsAColor(t *testing.T) {
-	var a Color
-	a = InitColor(-0.5, 0.4, 1.7)
+	a := InitColor(-0.5, 0.4, 1.7)
 	assert.Equal(t, a.R(), -0.5)
 	assert.Equal(t, a.G(), 0.4)
 	assert.Equal(t, a.B(), 1.7)
