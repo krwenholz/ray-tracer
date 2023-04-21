@@ -21,12 +21,12 @@ var tock *matrix.Matrix = matrix.RotationZ(-1 / 12.0)
 type BasicCast struct {
 	H            int
 	W            int
-	DefaultColor viz.Color
+	DefaultColor *viz.Color
 	Sphere       *shapes.Sphere
 	Light        *lights.PointLight
 }
 
-func Init(h, w int, c viz.Color, s *shapes.Sphere, l *lights.PointLight) *BasicCast {
+func Init(h, w int, c *viz.Color, s *shapes.Sphere, l *lights.PointLight) *BasicCast {
 	b := BasicCast{
 		H:            h,
 		W:            w,
@@ -107,7 +107,7 @@ func ThreeDRayCast(c *gin.Context) {
 		),
 	)
 	color := viz.InitColor(1, 1, 1)
-	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
+	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), color)
 	rc := Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
 	imgs := []image.RGBA64Image{}
 	steps := 10.0
@@ -135,14 +135,14 @@ func ThreeDRayCastLightMoves(c *gin.Context) {
 		),
 	)
 	color := viz.InitColor(1, 1, 1)
-	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), &color)
+	l := lights.InitPointLight(tuples.InitPoint(size/2, size/2, -size/5), color)
 	rc := Init(int(size), int(size), viz.InitColor(255, 255, 0), s, l)
 	steps := 10.0
 	imgs := []image.RGBA64Image{}
 	location := tuples.InitPoint(size/2, size/2, -size/4)
 	for i := 0.0; i < steps; i++ {
 		ll := tuples.InitPoint(size/steps*i, size/steps*i, -size/4)
-		rc.Light = lights.InitPointLight(ll, &color)
+		rc.Light = lights.InitPointLight(ll, color)
 		imgs = append(imgs, rc.DrawRGBA(location))
 	}
 	data := viz.EncodeX264FromRBA64(int(size), int(size), 5, imgs)
@@ -165,7 +165,7 @@ func ThreeDRayCastLightJpeg(c *gin.Context) {
 		),
 	)
 	lightColor := viz.InitColor(1, 1, 1)
-	light := lights.InitPointLight(tuples.InitPoint(-size/5, size/2, -size/5), &lightColor)
+	light := lights.InitPointLight(tuples.InitPoint(-size/5, size/2, -size/5), lightColor)
 	rc := Init(int(size), int(size), viz.InitColor(255, 255, 0), s, light)
 	img := rc.DrawRGBA(tuples.InitPoint(size/3, size/2, -size/4))
 	jpeg.Encode(

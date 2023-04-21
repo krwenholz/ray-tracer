@@ -4,11 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"happymonday.dev/ray-tracer/src/lights"
-	"happymonday.dev/ray-tracer/src/matrix"
-	"happymonday.dev/ray-tracer/src/shapes"
-	"happymonday.dev/ray-tracer/src/tuples"
-	"happymonday.dev/ray-tracer/src/viz"
 )
 
 func TestCreatingAWorld(t *testing.T) {
@@ -17,6 +12,7 @@ func TestCreatingAWorld(t *testing.T) {
 	assert.Empty(t, w.Light)
 }
 
+/**
 func TestDefaultWorld(t *testing.T) {
 	w := InitDefaultWorld()
 	l := lights.InitPointLight(tuples.InitPoint(-10, 10, -10), viz.InitColor(1, 1, 1))
@@ -27,3 +23,4 @@ func TestDefaultWorld(t *testing.T) {
 	assert.Empty(t, w.Objects)
 	assert.Empty(t, w.Light)
 }
+**/

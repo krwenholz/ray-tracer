@@ -28,20 +28,20 @@ func (c *Color) B() float64 {
 	return c.Z
 }
 
-func (c *Color) Add(c2 *Color) Color {
-	return Color{*c.Tuple.Add(&c2.Tuple)}
+func (c *Color) Add(c2 *Color) *Color {
+	return &Color{*c.Tuple.Add(&c2.Tuple)}
 }
 
-func (c *Color) Subtract(c2 *Color) Color {
-	return Color{*c.Tuple.Subtract(&c2.Tuple)}
+func (c *Color) Subtract(c2 *Color) *Color {
+	return &Color{*c.Tuple.Subtract(&c2.Tuple)}
 }
 
-func (c *Color) MultiplyScalar(s float64) Color {
-	return Color{*c.Tuple.MultiplyScalar(s)}
+func (c *Color) MultiplyScalar(s float64) *Color {
+	return &Color{*c.Tuple.MultiplyScalar(s)}
 }
 
-func (c *Color) Multiply(c2 *Color) Color {
-	return Color{tuples.Tuple{X: c.R() * c2.R(), Y: c.G() * c2.G(), Z: c.B() * c2.B(), W: 0}}
+func (c *Color) Multiply(c2 *Color) *Color {
+	return &Color{tuples.Tuple{X: c.R() * c2.R(), Y: c.G() * c2.G(), Z: c.B() * c2.B(), W: 0}}
 }
 
 func (c *Color) Eq(c2 *Color) bool {

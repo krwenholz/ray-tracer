@@ -18,7 +18,7 @@ func DefaultMaterial() *Material {
 	return &Material{viz.InitColor(1, 1, 1), 0.1, 0.9, 0.9, 200.0}
 }
 
-func InitMaterial(c viz.Color, a, d, sp, sh float64) *Material {
+func InitMaterial(c *viz.Color, a, d, sp, sh float64) *Material {
 	if a < 0 || d < 0 || sp < 0 || sh < 0 {
 		log.Fatal("Material creation attempted with negative values", a, d, sp, sh)
 	}

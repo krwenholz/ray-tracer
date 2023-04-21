@@ -14,9 +14,9 @@ import (
 func TestAPointLightHasAPositionAndIntensity(t *testing.T) {
 	intensity := viz.InitColor(1, 1, 1)
 	position := tuples.InitPoint(0, 0, 0)
-	light := InitPointLight(position, &intensity)
+	light := InitPointLight(position, intensity)
 	assert.True(t, light.Position.Equals(position))
-	assert.True(t, light.Intensity.Equals(intensity.Tuple))
+	assert.True(t, light.Intensity.Equals(&intensity.Tuple))
 }
 
 func TestLighting(t *testing.T) {
@@ -24,8 +24,8 @@ func TestLighting(t *testing.T) {
 		eyev    *tuples.Tuple
 		normalv *tuples.Tuple
 		point   *tuples.Tuple
-		color   viz.Color
-		exp     viz.Color
+		color   *viz.Color
+		exp     *viz.Color
 		msg     string
 	}
 	m := shapes.DefaultMaterial()
@@ -73,9 +73,9 @@ func TestLighting(t *testing.T) {
 		},
 	}
 	for _, o := range opts {
-		light := InitPointLight(o.point, &o.color)
+		light := InitPointLight(o.point, o.color)
 		result := light.Lighting(m, position, o.eyev, o.normalv)
 		log.Println(result.Tuple)
-		assert.True(t, o.exp.Equals(result.Tuple), o.msg)
+		assert.True(t, o.exp.Equals(&result.Tuple), o.msg)
 	}
 }

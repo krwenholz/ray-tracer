@@ -17,10 +17,10 @@ type Clock struct {
 	Positions    []*tuples.Tuple
 	H            int
 	W            int
-	DefaultColor viz.Color
+	DefaultColor *viz.Color
 }
 
-func Init(h, w int, c viz.Color) *Clock {
+func Init(h, w int, c *viz.Color) *Clock {
 	return &Clock{
 		Positions: []*tuples.Tuple{
 			tuples.InitPoint(0, 1, 0), // 1200

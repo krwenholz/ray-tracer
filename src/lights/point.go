@@ -18,8 +18,8 @@ func InitPointLight(p *tuples.Tuple, i *viz.Color) *PointLight {
 }
 
 func (p *PointLight) Lighting(m *shapes.Material, point *tuples.Tuple, eyev *tuples.Tuple, normalv *tuples.Tuple) *viz.Color {
-	var ambient, diffuse, specular viz.Color
-	effectiveColor := m.Color.Multiply(*p.Intensity)
+	var ambient, diffuse, specular *viz.Color
+	effectiveColor := m.Color.Multiply(p.Intensity)
 	lightv := p.Position.Subtract(point).Normalize()
 	ambient = effectiveColor.MultiplyScalar(m.Ambient)
 	lightDotNormal := lightv.DotProduct(normalv)
@@ -44,6 +44,5 @@ func (p *PointLight) Lighting(m *shapes.Material, point *tuples.Tuple, eyev *tup
 			specular = p.Intensity.MultiplyScalar(m.Specular * factor)
 		}
 	}
-	ret := ambient.Add(diffuse).Add(specular)
-	return &ret
+	return ambient.Add(diffuse).Add(specular)
 }

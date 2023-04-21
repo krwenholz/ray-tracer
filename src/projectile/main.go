@@ -25,7 +25,7 @@ type Scene struct {
 	E                   Environment
 	MaxHeight           float64
 	MaxWidth            float64
-	DefaultColor        viz.Color
+	DefaultColor        *viz.Color
 }
 
 func (s *Scene) Tick() {
