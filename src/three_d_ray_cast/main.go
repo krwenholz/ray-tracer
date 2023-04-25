@@ -81,7 +81,7 @@ func (c *BasicCast) HitColor(source *tuples.Tuple, x, y int) *viz.Color {
 	point := r.Position(h.T)
 	normal := c.Sphere.NormalAt(point)
 	eye := r.Direction.Negate()
-	return c.Light.Lighting(c.Sphere.Material, point, eye, normal)
+	return c.Light.Lighting(c.Sphere.Material(), point, eye, normal)
 }
 
 func (c *BasicCast) Height() int {
@@ -99,7 +99,7 @@ func (c *BasicCast) Len() int {
 func ThreeDRayCast(c *gin.Context) {
 	size := 500.0
 	s := shapes.InitSphere()
-	s.Material.Color = viz.InitColor(1, 0.2, 1)
+	s.Material().Color = viz.InitColor(1, 0.2, 1)
 	s.SetTransform(
 		matrix.Chain(
 			matrix.Scaling(size/7, size/7, size/7),
@@ -127,7 +127,7 @@ func ThreeDRayCast(c *gin.Context) {
 func ThreeDRayCastLightMoves(c *gin.Context) {
 	size := 500.0
 	s := shapes.InitSphere()
-	s.Material.Color = viz.InitColor(1, 0.2, 1)
+	s.Material().Color = viz.InitColor(1, 0.2, 1)
 	s.SetTransform(
 		matrix.Chain(
 			matrix.Scaling(size/7, size/7, size/7),
@@ -157,7 +157,7 @@ func ThreeDRayCastLightMoves(c *gin.Context) {
 func ThreeDRayCastLightJpeg(c *gin.Context) {
 	size := 500.0
 	s := shapes.InitSphere()
-	s.Material.Color = viz.InitColor(1, 0.2, 1)
+	s.Material().Color = viz.InitColor(1, 0.2, 1)
 	s.SetTransform(
 		matrix.Chain(
 			matrix.Scaling(size/7, size/7, size/7),

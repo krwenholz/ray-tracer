@@ -26,7 +26,7 @@ func InitMaterial(c *viz.Color, a, d, sp, sh float64) *Material {
 }
 
 func (m *Material) Equals(m2 *Material) bool {
-	return (m.Color.Equals(&m2.Color.Tuple) &&
+	return (m.Color.Equals(m2.Color) &&
 		m.Ambient == m2.Ambient &&
 		m.Diffuse == m2.Diffuse &&
 		m.Specular == m2.Specular &&

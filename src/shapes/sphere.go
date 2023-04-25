@@ -11,9 +11,9 @@ import (
 
 type Sphere struct {
 	Id               ksuid.KSUID
-	Transform        *matrix.Matrix
-	TransformInverse *matrix.Matrix
-	Material         *Material
+	transform        *matrix.Matrix
+	transformInverse *matrix.Matrix
+	material         *Material
 	xs               sync.Map
 }
 
@@ -27,6 +27,14 @@ func InitSphere() *Sphere {
 	}
 }
 
+func (s Sphere) Transform() *matrix.Matrix {
+	return s.transform
+}
+
+func (s Sphere) Material() *Material {
+	return s.material
+}
+
 func (s *Sphere) Intersect(r *Ray) *Intersections {
 	if v, ok := s.xs.Load(r.Id); ok {
 		if xs, ok := v.(*Intersections); ok {
@@ -36,7 +44,7 @@ func (s *Sphere) Intersect(r *Ray) *Intersections {
 	xs := InitIntersections()
 	s.xs.Store(r.Id, &xs)
 
-	r = r.Transform(s.TransformInverse)
+	r = r.Transform(s.transformInverse)
 
 	sphereToRay := r.Origin.Subtract(tuples.InitPoint(0, 0, 0))
 	a := r.Direction.DotProduct(r.Direction)
@@ -63,14 +71,18 @@ func (s Sphere) Equals(s2 any) bool {
 }
 
 func (s *Sphere) SetTransform(t *matrix.Matrix) {
-	s.Transform = t
-	s.TransformInverse = t.Inverse()
+	s.transform = t
+	s.transformInverse = t.Inverse()
+}
+
+func (s *Sphere) SetMaterial(m *Material) {
+	s.material = m
 }
 
 func (s *Sphere) NormalAt(p *tuples.Tuple) *tuples.Tuple {
-	objectPoint := s.TransformInverse.MultiplyTuple(p)
+	objectPoint := s.transformInverse.MultiplyTuple(p)
 	objectNormal := objectPoint.Subtract(tuples.InitPoint(0, 0, 0))
-	worldNormal := s.TransformInverse.Transpose().MultiplyTuple(objectNormal)
+	worldNormal := s.transformInverse.Transpose().MultiplyTuple(objectNormal)
 	worldNormal.W = 0
 	return worldNormal.Normalize()
 }

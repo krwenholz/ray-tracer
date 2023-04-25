@@ -2,16 +2,12 @@ package shapes
 
 import "sort"
 
-type Intersectable interface {
-	Equals(i any) bool
-}
-
 type Intersection struct {
 	T      float64
-	Object Intersectable
+	Object Object
 }
 
-func InitIntersection(t float64, o Intersectable) *Intersection {
+func InitIntersection(t float64, o Object) *Intersection {
 	return &Intersection{t, o}
 }
 

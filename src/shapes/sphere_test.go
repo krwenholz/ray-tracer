@@ -64,13 +64,13 @@ func TestIntersectSetsTheObjectOnTheIntersection(t *testing.T) {
 
 func TestSphereDefaultTranformation(t *testing.T) {
 	s := InitSphere()
-	assert.True(t, s.Transform.Equals(matrix.InitMatrixIdentity(4)))
+	assert.True(t, s.Transform().Equals(matrix.InitMatrixIdentity(4)))
 }
 
 func TestSphereSetTransform(t *testing.T) {
 	s := InitSphere()
 	s.SetTransform(matrix.Translation(2, 3, 4))
-	assert.True(t, s.Transform.Equals(matrix.Translation(2, 3, 4)))
+	assert.True(t, s.Transform().Equals(matrix.Translation(2, 3, 4)))
 }
 
 func TestIntersectingAScaledSphere(t *testing.T) {
@@ -163,12 +163,12 @@ func TestNormalOnATransformedSphere(t *testing.T) {
 
 func TestSphereHasADefaultMaterial(t *testing.T) {
 	s := InitSphere()
-	assert.True(t, s.Material.Equals(DefaultMaterial()))
+	assert.True(t, s.Material().Equals(DefaultMaterial()))
 }
 
 func TestSphereMayBeAssignedAMaterial(t *testing.T) {
 	s := InitSphere()
-	s.Material = InitMaterial(viz.Black(), 1, 1, 1, 1)
+	s.material = InitMaterial(viz.Black(), 1, 1, 1, 1)
 	m := InitMaterial(viz.Black(), 1, 1, 1, 1)
-	assert.True(t, s.Material.Equals(m))
+	assert.True(t, s.Material().Equals(m))
 }

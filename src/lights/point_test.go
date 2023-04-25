@@ -16,7 +16,7 @@ func TestAPointLightHasAPositionAndIntensity(t *testing.T) {
 	position := tuples.InitPoint(0, 0, 0)
 	light := InitPointLight(position, intensity)
 	assert.True(t, light.Position.Equals(position))
-	assert.True(t, light.Intensity.Equals(&intensity.Tuple))
+	assert.True(t, light.Intensity.Equals(intensity))
 }
 
 func TestLighting(t *testing.T) {
@@ -76,6 +76,6 @@ func TestLighting(t *testing.T) {
 		light := InitPointLight(o.point, o.color)
 		result := light.Lighting(m, position, o.eyev, o.normalv)
 		log.Println(result.Tuple)
-		assert.True(t, o.exp.Equals(&result.Tuple), o.msg)
+		assert.True(t, o.exp.Equals(result), o.msg)
 	}
 }

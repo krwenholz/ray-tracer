@@ -46,3 +46,7 @@ func (p *PointLight) Lighting(m *shapes.Material, point *tuples.Tuple, eyev *tup
 	}
 	return ambient.Add(diffuse).Add(specular)
 }
+
+func (p *PointLight) Equals(p2 *PointLight) bool {
+	return p.Intensity.Equals(p2.Intensity) && p.Position.Equals(p2.Position)
+}

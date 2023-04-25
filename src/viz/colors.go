@@ -44,7 +44,7 @@ func (c *Color) Multiply(c2 *Color) *Color {
 	return &Color{tuples.Tuple{X: c.R() * c2.R(), Y: c.G() * c2.G(), Z: c.B() * c2.B(), W: 0}}
 }
 
-func (c *Color) Eq(c2 *Color) bool {
+func (c *Color) Equals(c2 *Color) bool {
 	return c.Tuple.Equals(&c2.Tuple)
 }
 
