@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"happymonday.dev/ray-tracer/src/tuples"
 )
 
 func TestAnIntersectionEncapsulatesTAndObject(t *testing.T) {
@@ -59,4 +60,37 @@ func TestHitIsAlwaysTheLowestNonegativeIntersection(t *testing.T) {
 	xs := InitIntersections(i1, i2, i3, i4)
 	i := xs.Hit()
 	assert.True(t, i4.Equals(i))
+}
+
+func TestPrecomputingTheStateOfAnIntersection(t *testing.T) {
+	r := InitRay(tuples.InitPoint(0, 0, -5), tuples.InitVector(0, 0, 1))
+	s := InitSphere()
+	i := InitIntersection(4, s)
+	comps := i.PrepareComputations(r)
+	assert.Equal(t, i.T, comps.T)
+	assert.True(t, s.Equals(comps.Object))
+	assert.True(t, tuples.InitPoint(0, 0, -1).Equals(comps.Point))
+	assert.True(t, tuples.InitVector(0, 0, -1).Equals(comps.EyeV))
+	assert.True(t, tuples.InitVector(0, 0, -1).Equals(comps.NormalV))
+}
+
+func TestTheHitWhenAnIntersectionOccursOutside(t *testing.T) {
+	r := InitRay(tuples.InitPoint(0, 0, -5), tuples.InitVector(0, 0, 1))
+	s := InitSphere()
+	i := InitIntersection(4, s)
+	comps := i.PrepareComputations(r)
+	assert.False(t, comps.Inside)
+}
+
+func TestTheHitWhenAnIntersectionOccursInside(t *testing.T) {
+	r := InitRay(tuples.InitPoint(0, 0, 0), tuples.InitVector(0, 0, 1))
+	s := InitSphere()
+	i := InitIntersection(1, s)
+	comps := i.PrepareComputations(r)
+	assert.Equal(t, i.T, comps.T)
+	assert.True(t, s.Equals(comps.Object))
+	assert.True(t, tuples.InitPoint(0, 0, 1).Equals(comps.Point))
+	assert.True(t, tuples.InitVector(0, 0, -1).Equals(comps.EyeV))
+	assert.True(t, tuples.InitVector(0, 0, -1).Equals(comps.NormalV))
+	assert.True(t, comps.Inside)
 }

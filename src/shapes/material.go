@@ -22,7 +22,7 @@ func InitMaterial(c *viz.Color, a, d, sp, sh float64) *Material {
 	if a < 0 || d < 0 || sp < 0 || sh < 0 {
 		log.Fatal("Material creation attempted with negative values", a, d, sp, sh)
 	}
-	return &Material{&c, a, d, sp, sh}
+	return &Material{c, a, d, sp, sh}
 }
 
 func (m *Material) Equals(m2 *Material) bool {

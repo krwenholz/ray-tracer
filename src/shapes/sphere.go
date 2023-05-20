@@ -35,7 +35,7 @@ func (s Sphere) Material() *Material {
 	return s.material
 }
 
-func (s *Sphere) Intersect(r *Ray) *Intersections {
+func (s Sphere) Intersect(r *Ray) *Intersections {
 	if v, ok := s.xs.Load(r.Id); ok {
 		if xs, ok := v.(*Intersections); ok {
 			return xs
@@ -79,7 +79,7 @@ func (s *Sphere) SetMaterial(m *Material) {
 	s.material = m
 }
 
-func (s *Sphere) NormalAt(p *tuples.Tuple) *tuples.Tuple {
+func (s Sphere) NormalAt(p *tuples.Tuple) *tuples.Tuple {
 	objectPoint := s.transformInverse.MultiplyTuple(p)
 	objectNormal := objectPoint.Subtract(tuples.InitPoint(0, 0, 0))
 	worldNormal := s.transformInverse.Transpose().MultiplyTuple(objectNormal)

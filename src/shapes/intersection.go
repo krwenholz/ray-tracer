@@ -1,10 +1,23 @@
 package shapes
 
-import "sort"
+import (
+	"sort"
+
+	"happymonday.dev/ray-tracer/src/tuples"
+)
 
 type Intersection struct {
 	T      float64
 	Object Object
+}
+
+type IntersectionComputations struct {
+	T       float64
+	Object  Object
+	Point   *tuples.Tuple
+	EyeV    *tuples.Tuple
+	NormalV *tuples.Tuple
+	Inside  bool
 }
 
 func InitIntersection(t float64, o Object) *Intersection {
@@ -13,6 +26,18 @@ func InitIntersection(t float64, o Object) *Intersection {
 
 func (i *Intersection) Equals(i2 *Intersection) bool {
 	return i.T == i2.T && i.Object.Equals(i2.Object)
+}
+
+func (i *Intersection) PrepareComputations(r *Ray) *IntersectionComputations {
+	c := IntersectionComputations{T: i.T, Object: i.Object}
+	c.Point = r.Position(c.T)
+	c.NormalV = c.Object.NormalAt(c.Point)
+	c.EyeV = r.Direction.Negate()
+	c.Inside = c.NormalV.DotProduct(c.EyeV) < 0
+	if c.Inside {
+		c.NormalV = c.NormalV.Negate()
+	}
+	return &c
 }
 
 type Intersections struct {
