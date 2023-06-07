@@ -25,7 +25,7 @@ func InitEmptyMatrix(height, width int) *Matrix {
 }
 
 func InitMatrix(s string) *Matrix {
-	s1 := strings.Split(s, "\n")
+	s1 := strings.Split(strings.TrimSpace(s), "\n")
 	rows := [][]float64{}
 	for _, r := range s1 {
 		cols := strings.Split(r, "|")

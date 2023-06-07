@@ -8,10 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.ngrok.com/ngrok"
 	"golang.ngrok.com/ngrok/config"
-	"happymonday.dev/ray-tracer/src/basic_ray_cast"
-	"happymonday.dev/ray-tracer/src/clock"
-	"happymonday.dev/ray-tracer/src/projectile"
-	"happymonday.dev/ray-tracer/src/three_d_ray_cast"
+	"happymonday.dev/ray-tracer/src/demos/basic_ray_cast"
+	"happymonday.dev/ray-tracer/src/demos/clock"
+	"happymonday.dev/ray-tracer/src/demos/projectile"
+	"happymonday.dev/ray-tracer/src/demos/simpler_world"
+	"happymonday.dev/ray-tracer/src/demos/three_d_ray_cast"
 	"happymonday.dev/ray-tracer/src/tuples"
 	"happymonday.dev/ray-tracer/src/viz"
 )
@@ -25,7 +26,7 @@ func main() {
 func run(ctx context.Context) error {
 	tun, err := ngrok.Listen(ctx,
 		config.HTTPEndpoint(
-			config.WithOAuth("github", config.WithAllowOAuthEmail(os.Getenv("EMAIL"))),
+			//config.WithOAuth("github", config.WithAllowOAuthEmail(os.Getenv("EMAIL"))),
 			config.WithDomain(os.Getenv("DOMAIN")),
 		),
 		ngrok.WithAuthtokenFromEnv(),
@@ -46,6 +47,7 @@ func run(ctx context.Context) error {
 	r.GET("/basic_3d", three_d_ray_cast.ThreeDRayCast)
 	r.GET("/basic_3d_light", three_d_ray_cast.ThreeDRayCastLightMoves)
 	r.GET("/basic_3d_jpeg", three_d_ray_cast.ThreeDRayCastLightJpeg)
+	r.GET("/simpler_world", simpler_world.SimplerWorld)
 	return r.RunListener(tun)
 }
 

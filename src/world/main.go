@@ -31,17 +31,24 @@ func InitDefaultWorld() *World {
 }
 
 func (w *World) Intersections(r *shapes.Ray) *shapes.Intersections {
-	xs := []*shapes.Intersection{}
+	ress := make(chan []*shapes.Intersection)
 	wg := sync.WaitGroup{}
 	wg.Add(len(w.Objects))
 	for _, o := range w.Objects {
 		obj := o
 		go func() {
-			xs = append(xs, obj.Intersect(r).Intersections...)
+			ress <- obj.Intersect(r).Intersections
 			wg.Done()
 		}()
 	}
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(ress)
+	}()
+	xs := []*shapes.Intersection{}
+	for res := range ress {
+		xs = append(xs, res...)
+	}
 	return shapes.InitIntersections(xs...)
 }
 
@@ -51,4 +58,13 @@ func (w *World) ShadeHit(c *shapes.IntersectionComputations) *viz.Color {
 		res = res.Add(l.Lighting(c.Object.Material(), c.Point, c.EyeV, c.NormalV))
 	}
 	return res
+}
+
+func (w *World) ColorAt(r *shapes.Ray) *viz.Color {
+	is := w.Intersections(r)
+	h := is.Hit()
+	if h == nil {
+		return viz.Black()
+	}
+	return w.ShadeHit(h.PrepareComputations(r))
 }
