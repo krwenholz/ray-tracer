@@ -91,3 +91,59 @@ func TestColorWithAnIntersectionBehindTheRay(t *testing.T) {
 	c := w.ColorAt(r)
 	assert.True(t, inner.Material().Color.Equals(c))
 }
+
+func TestShadows(t *testing.T) {
+	type opt struct {
+		w   *World
+		p   *tuples.Tuple
+		exp bool
+		msg string
+	}
+	opts := []opt{
+		{
+			InitDefaultWorld(),
+			tuples.InitPoint(0, 10, 0),
+			false,
+			"There is no shadow when nothing is colinear with point and light",
+		},
+		{
+			InitDefaultWorld(),
+			tuples.InitPoint(10, -10, 10),
+			true,
+			"The shadow when the object is between the point and light",
+		},
+		{
+			InitDefaultWorld(),
+			tuples.InitPoint(-20, 20, -20),
+			false,
+			"There is no shadow when object is behind the light",
+		},
+		{
+			InitDefaultWorld(),
+			tuples.InitPoint(-2, 2, -2),
+			false,
+			"There is no shadow when an object is behind the point",
+		},
+	}
+	for _, o := range opts {
+		assert.Equal(t, o.exp, o.w.IsShadowed(o.p), o.msg)
+	}
+}
+
+func TestShadeHitIsGivenAnIntersectionInShadow(t *testing.T) {
+	w := InitWorld()
+	l := lights.InitPointLight(tuples.InitPoint(0, 0, -10), viz.InitColor(1, 1, 1))
+	s1 := shapes.InitSphere()
+	s2 := shapes.InitSphere()
+	s2.SetTransform(matrix.Translation(0, 0, 10))
+	w.Objects = []shapes.Object{s1, s2}
+	w.Lights = []*lights.PointLight{l}
+
+	r := shapes.InitRay(tuples.InitPoint(0, 0, 5), tuples.InitVector(0, 0, 1))
+	i := shapes.InitIntersection(4, s2)
+
+	comps := i.PrepareComputations(r)
+	c := w.ShadeHit(comps)
+
+	assert.True(t, c.Equals(viz.InitColor(0.1, 0.1, 0.1)))
+}

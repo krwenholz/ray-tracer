@@ -2,7 +2,8 @@ package maths
 
 import "math"
 
+const EPSILON float64 = 0.00001
+
 func FuzzyEquals(x, y float64) bool {
-	epsilon := 0.00001
-	return math.Abs(x-y) < epsilon
+	return math.Abs(x-y) < EPSILON
 }

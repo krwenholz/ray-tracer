@@ -21,12 +21,13 @@ func TestAPointLightHasAPositionAndIntensity(t *testing.T) {
 
 func TestLighting(t *testing.T) {
 	type opt struct {
-		eyev    *tuples.Tuple
-		normalv *tuples.Tuple
-		point   *tuples.Tuple
-		color   *viz.Color
-		exp     *viz.Color
-		msg     string
+		eyev     *tuples.Tuple
+		normalv  *tuples.Tuple
+		point    *tuples.Tuple
+		color    *viz.Color
+		inShadow bool
+		exp      *viz.Color
+		msg      string
 	}
 	m := shapes.DefaultMaterial()
 	position := tuples.InitPoint(0, 0, 0)
@@ -71,10 +72,19 @@ func TestLighting(t *testing.T) {
 			exp:     viz.InitColor(0.1, 0.1, 0.1),
 			msg:     "Lighting with the light behind the surface",
 		},
+		{
+			eyev:     tuples.InitVector(0, 0, -1),
+			normalv:  tuples.InitVector(0, 0, -1),
+			point:    tuples.InitPoint(0, 0, -10),
+			color:    viz.InitColor(1, 1, 1),
+			inShadow: true,
+			exp:      viz.InitColor(0.1, 0.1, 0.1),
+			msg:      "Lighting with the surface in shadow",
+		},
 	}
 	for _, o := range opts {
 		light := InitPointLight(o.point, o.color)
-		result := light.Lighting(m, position, o.eyev, o.normalv)
+		result := light.Lighting(m, position, o.eyev, o.normalv, o.inShadow)
 		log.Println(result.Tuple)
 		assert.True(t, o.exp.Equals(result), o.msg)
 	}

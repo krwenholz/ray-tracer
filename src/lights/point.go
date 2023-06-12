@@ -17,13 +17,16 @@ func InitPointLight(p *tuples.Tuple, i *viz.Color) *PointLight {
 	return &PointLight{p, i}
 }
 
-func (p *PointLight) Lighting(m *shapes.Material, point *tuples.Tuple, eyev *tuples.Tuple, normalv *tuples.Tuple) *viz.Color {
+func (p *PointLight) Lighting(m *shapes.Material, point *tuples.Tuple, eyev *tuples.Tuple, normalv *tuples.Tuple, inShadow bool) *viz.Color {
 	var ambient, diffuse, specular *viz.Color
 	// combine the surface color with the light's color/intensity
 	effectiveColor := m.Color.Multiply(p.Intensity)
 	// find the direction of the light source
 	lightv := p.Position.Subtract(point).Normalize()
 	ambient = effectiveColor.MultiplyScalar(m.Ambient)
+	if inShadow {
+		return ambient
+	}
 	// lightDotNormal represents the cosine of the angle between the
 	// light vector and the normal vector. A negative number means the light is on the other
 	// side of the surface.

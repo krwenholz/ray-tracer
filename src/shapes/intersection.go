@@ -3,6 +3,7 @@ package shapes
 import (
 	"sort"
 
+	"happymonday.dev/ray-tracer/src/maths"
 	"happymonday.dev/ray-tracer/src/tuples"
 )
 
@@ -12,12 +13,13 @@ type Intersection struct {
 }
 
 type IntersectionComputations struct {
-	T       float64
-	Object  Object
-	Point   *tuples.Tuple
-	EyeV    *tuples.Tuple
-	NormalV *tuples.Tuple
-	Inside  bool
+	T         float64
+	Object    Object
+	Point     *tuples.Tuple
+	EyeV      *tuples.Tuple
+	NormalV   *tuples.Tuple
+	OverPoint *tuples.Tuple
+	Inside    bool
 }
 
 func InitIntersection(t float64, o Object) *Intersection {
@@ -37,6 +39,8 @@ func (i *Intersection) PrepareComputations(r *Ray) *IntersectionComputations {
 	if c.Inside {
 		c.NormalV = c.NormalV.Negate()
 	}
+
+	c.OverPoint = c.Point.Add(c.NormalV.MultiplyScalar(maths.EPSILON))
 	return &c
 }
 

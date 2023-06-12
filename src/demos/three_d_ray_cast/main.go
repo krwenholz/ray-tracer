@@ -81,7 +81,7 @@ func (c *BasicCast) HitColor(source *tuples.Tuple, x, y int) *viz.Color {
 	point := r.Position(h.T)
 	normal := c.Sphere.NormalAt(point)
 	eye := r.Direction.Negate()
-	return c.Light.Lighting(c.Sphere.Material(), point, eye, normal)
+	return c.Light.Lighting(c.Sphere.Material(), point, eye, normal, false)
 }
 
 func (c *BasicCast) Height() int {

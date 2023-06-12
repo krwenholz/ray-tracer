@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"happymonday.dev/ray-tracer/src/maths"
+	"happymonday.dev/ray-tracer/src/matrix"
 	"happymonday.dev/ray-tracer/src/tuples"
 )
 
@@ -93,4 +95,16 @@ func TestTheHitWhenAnIntersectionOccursInside(t *testing.T) {
 	assert.True(t, tuples.InitVector(0, 0, -1).Equals(comps.EyeV))
 	assert.True(t, tuples.InitVector(0, 0, -1).Equals(comps.NormalV))
 	assert.True(t, comps.Inside)
+}
+
+func TestTheHitShouldOffsetThePoint(t *testing.T) {
+	r := InitRay(tuples.InitPoint(0, 0, -5), tuples.InitVector(0, 0, 1))
+	s := InitSphere()
+	s.SetTransform(matrix.Translation(0, 0, 1))
+
+	i := InitIntersection(5, s)
+	comps := i.PrepareComputations(r)
+
+	assert.Less(t, comps.OverPoint.Z, -maths.EPSILON/2.0)
+	assert.Less(t, comps.OverPoint.Z, comps.Point.Z)
 }
