@@ -11,7 +11,7 @@ import (
 )
 
 type World struct {
-	Objects []shapes.Object
+	Objects []shapes.Shape
 	Lights  []*lights.PointLight
 }
 
@@ -27,7 +27,7 @@ func InitDefaultWorld() *World {
 	s1.Material().Specular = 0.2
 	s2 := shapes.InitSphere()
 	s2.SetTransform(matrix.Scaling(0.5, 0.5, 0.5))
-	return &World{[]shapes.Object{s1, s2}, []*lights.PointLight{l}}
+	return &World{[]shapes.Shape{s1, s2}, []*lights.PointLight{l}}
 }
 
 func (w *World) Intersections(r *shapes.Ray) *shapes.Intersections {
@@ -55,7 +55,7 @@ func (w *World) Intersections(r *shapes.Ray) *shapes.Intersections {
 func (w *World) ShadeHit(c *shapes.IntersectionComputations) *viz.Color {
 	res := viz.Black()
 	for _, l := range w.Lights {
-		res = res.Add(l.Lighting(c.Object.Material(), c.Point, c.EyeV, c.NormalV, w.IsShadowed(c.OverPoint)))
+		res = res.Add(l.Lighting(c.Object.Material(), c.Point, c.EyeV, c.NormalV, w.IsShadowed(l, c.OverPoint)))
 	}
 	return res
 }
@@ -69,8 +69,8 @@ func (w *World) ColorAt(r *shapes.Ray) *viz.Color {
 	return w.ShadeHit(h.PrepareComputations(r))
 }
 
-func (w *World) IsShadowed(p *tuples.Tuple) bool {
-	v := w.Lights[0].Position.Subtract(p)
+func (w *World) IsShadowed(l *lights.PointLight, p *tuples.Tuple) bool {
+	v := l.Position.Subtract(p)
 	distance := v.Magnitude()
 	direction := v.Normalize()
 	r := shapes.InitRay(p, direction)

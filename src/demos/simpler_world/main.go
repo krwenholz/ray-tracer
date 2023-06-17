@@ -25,7 +25,7 @@ func worldOne() *world.World {
 	s2.Material().Diffuse = 0.7
 	s2.Material().Specular = 0.2
 	s2.SetTransform(matrix.Scaling(0.5, 0.5, 0.5).Multiply(matrix.Translation(5, 0, 0)))
-	return &world.World{Objects: []shapes.Object{s1, s2}, Lights: []*lights.PointLight{l}}
+	return &world.World{Objects: []shapes.Shape{s1, s2}, Lights: []*lights.PointLight{l}}
 }
 
 func worldOneBacked() *world.World {
@@ -59,12 +59,12 @@ func worldOneBacked() *world.World {
 	sbz.Material().Specular = 0.2
 	sbz.SetTransform(matrix.Chain(matrix.Scaling(100, 100, 0.01), matrix.Translation(0, 0, -10)))
 
-	return &world.World{Objects: []shapes.Object{s1, s2, sbx, sby, sbz}, Lights: []*lights.PointLight{l}}
+	return &world.World{Objects: []shapes.Shape{s1, s2, sbx, sby, sbz}, Lights: []*lights.PointLight{l}}
 }
 
 func worldFull() *world.World {
 	l1 := lights.InitPointLight(tuples.InitPoint(-10, 10, -10), viz.InitColor(1, 1, 1))
-	l2 := lights.InitPointLight(tuples.InitPoint(-20, 10, -10), viz.InitColor(1, 1, 1))
+	l2 := lights.InitPointLight(tuples.InitPoint(-9.5, 10, -10), viz.InitColor(1, 1, 1))
 	s1 := shapes.InitSphere()
 	s1.Material().Color = viz.InitColor(0.8, 1.0, 0.6)
 	s1.Material().Diffuse = 0.7
@@ -100,7 +100,7 @@ func worldFull() *world.World {
 	sbz.Material().Specular = 0.2
 	sbz.SetTransform(matrix.Chain(matrix.Scaling(100, 100, 0.01), matrix.Translation(0, 0, 10)))
 
-	return &world.World{Objects: []shapes.Object{s1, s2, s3, sbx, sby, sbz}, Lights: []*lights.PointLight{l1, l2}}
+	return &world.World{Objects: []shapes.Shape{s1, s2, s3, sbx, sby, sbz}, Lights: []*lights.PointLight{l1, l2}}
 }
 
 func worldHeart() *world.World {
@@ -145,7 +145,7 @@ func worldHeart() *world.World {
 	sbz.Material().Specular = 0.2
 	sbz.SetTransform(matrix.Chain(matrix.Scaling(100, 100, 0.01), matrix.Translation(0, 0, 10)))
 
-	return &world.World{Objects: []shapes.Object{s1, s2, sbx, sby, sbz}, Lights: []*lights.PointLight{l}}
+	return &world.World{Objects: []shapes.Shape{s1, s2, sbx, sby, sbz}, Lights: []*lights.PointLight{l}}
 }
 
 func worldBook() *world.World {
@@ -208,7 +208,7 @@ func worldBook() *world.World {
 			matrix.Translation(-1.5, 0.33, -0.75),
 		))
 
-	return &world.World{Objects: []shapes.Object{floor, left_wall, right_wall, middle, left, right}, Lights: []*lights.PointLight{l}}
+	return &world.World{Objects: []shapes.Shape{floor, left_wall, right_wall, middle, left, right}, Lights: []*lights.PointLight{l}}
 }
 
 func SimplerWorld(ctx *gin.Context) {

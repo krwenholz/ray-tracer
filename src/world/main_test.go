@@ -126,7 +126,7 @@ func TestShadows(t *testing.T) {
 		},
 	}
 	for _, o := range opts {
-		assert.Equal(t, o.exp, o.w.IsShadowed(o.p), o.msg)
+		assert.Equal(t, o.exp, o.w.IsShadowed(o.w.Lights[0], o.p), o.msg)
 	}
 }
 
@@ -136,7 +136,7 @@ func TestShadeHitIsGivenAnIntersectionInShadow(t *testing.T) {
 	s1 := shapes.InitSphere()
 	s2 := shapes.InitSphere()
 	s2.SetTransform(matrix.Translation(0, 0, 10))
-	w.Objects = []shapes.Object{s1, s2}
+	w.Objects = []shapes.Shape{s1, s2}
 	w.Lights = []*lights.PointLight{l}
 
 	r := shapes.InitRay(tuples.InitPoint(0, 0, 5), tuples.InitVector(0, 0, 1))

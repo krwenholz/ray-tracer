@@ -9,12 +9,12 @@ import (
 
 type Intersection struct {
 	T      float64
-	Object Object
+	Object Shape
 }
 
 type IntersectionComputations struct {
 	T         float64
-	Object    Object
+	Object    Shape
 	Point     *tuples.Tuple
 	EyeV      *tuples.Tuple
 	NormalV   *tuples.Tuple
@@ -22,7 +22,7 @@ type IntersectionComputations struct {
 	Inside    bool
 }
 
-func InitIntersection(t float64, o Object) *Intersection {
+func InitIntersection(t float64, o Shape) *Intersection {
 	return &Intersection{t, o}
 }
 

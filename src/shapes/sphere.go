@@ -4,35 +4,19 @@ import (
 	"math"
 	"sync"
 
-	"github.com/segmentio/ksuid"
-	"happymonday.dev/ray-tracer/src/matrix"
 	"happymonday.dev/ray-tracer/src/tuples"
 )
 
 type Sphere struct {
-	Id               ksuid.KSUID
-	transform        *matrix.Matrix
-	transformInverse *matrix.Matrix
-	material         *Material
-	xs               sync.Map
+	*ShapeEmbed
+	xs sync.Map
 }
 
 func InitSphere() *Sphere {
 	return &Sphere{
-		ksuid.New(),
-		matrix.InitMatrixIdentity(4),
-		matrix.InitMatrixIdentity(4),
-		DefaultMaterial(),
+		InitShapeEmbed(nil, nil),
 		sync.Map{},
 	}
-}
-
-func (s Sphere) Transform() *matrix.Matrix {
-	return s.transform
-}
-
-func (s Sphere) Material() *Material {
-	return s.material
 }
 
 func (s Sphere) Intersect(r *Ray) *Intersections {
@@ -44,7 +28,7 @@ func (s Sphere) Intersect(r *Ray) *Intersections {
 	xs := InitIntersections()
 	s.xs.Store(r.Id, &xs)
 
-	r = r.Transform(s.transformInverse)
+	r = s.prepIntersect(r)
 
 	sphereToRay := r.Origin.Subtract(tuples.InitPoint(0, 0, 0))
 	a := r.Direction.DotProduct(r.Direction)
@@ -70,19 +54,6 @@ func (s Sphere) Equals(s2 any) bool {
 	return false
 }
 
-func (s *Sphere) SetTransform(t *matrix.Matrix) {
-	s.transform = t
-	s.transformInverse = t.Inverse()
-}
-
-func (s *Sphere) SetMaterial(m *Material) {
-	s.material = m
-}
-
 func (s Sphere) NormalAt(p *tuples.Tuple) *tuples.Tuple {
-	objectPoint := s.transformInverse.MultiplyTuple(p)
-	objectNormal := objectPoint.Subtract(tuples.InitPoint(0, 0, 0))
-	worldNormal := s.transformInverse.Transpose().MultiplyTuple(objectNormal)
-	worldNormal.W = 0
-	return worldNormal.Normalize()
+	return s.normalAtPost(s.normalAtPre(p).Subtract(tuples.InitPoint(0, 0, 0)))
 }
